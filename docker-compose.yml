@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  fooocus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    working_dir: /usr/src/fooocus
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - "./Fooocus/:/usr/src/fooocus"
+    command: python entry_with_update.py --listen
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: 'nvidia'
+              count: all
+              capabilities: [gpu]
+    networks:
+      - fooocus
+    ports:
+      - "7865:7865"
+    expose:
+      - "7865"
+
+networks:
+  fooocus:
+    name: fooocus
+
